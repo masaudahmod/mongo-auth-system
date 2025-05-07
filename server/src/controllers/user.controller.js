@@ -64,10 +64,57 @@ const createUser = async (req, res) => {
       `Your OTP for email verification is ${otp}. It is valid for 10 minutes.`
     );
 
-    return res.json(new ApiSuccess(200, "User created successfully", { user }));
+    return res.json(new ApiSuccess(201, "User created successfully", { user }));
   } catch (error) {
     throw new ApiError(500, error.message);
   }
 };
 
-export { createUser };
+const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      throw new ApiError(400, "Email and password are required");
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new ApiError(404, "User not found");
+    }
+
+    const isPasswordMatch = await user.isPasswordMatch(password);
+    if (!isPasswordMatch) {
+      throw new ApiError(401, "Invalid credentials");
+    }
+
+    const { accessToken, refreshToken } = await generateTokens(user._id);
+    const options = {
+      expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+      httpOnly: true,
+      sameSite: "strict",
+    };
+    res
+      .cookie("accessToken", accessToken, options)
+      .cookie("refreshToken", refreshToken, options);
+    if (!user.isEmailVerified) {
+      return res.json(
+        new ApiSuccess(200, "User logged in successfully", {
+          user: user,
+          accessToken,
+        })
+      );
+    }
+    return res.json(
+      new ApiSuccess(200, "User logged in successfully", {
+        user: user,
+        accessToken,
+        refreshToken,
+      })
+    );
+  } catch (error) {
+    console.log("Error in login", error);
+  }
+};
+
+
+export { createUser, login };
