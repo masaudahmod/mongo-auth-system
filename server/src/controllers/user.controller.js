@@ -1,6 +1,11 @@
 import { User } from "../models/user.schema.js";
+import { sendEmail } from "../services/mailService.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiSuccess } from "../utils/ApiSuccess.js";
+
+const generateOtp = () => {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
 
 const createUser = async (req, res) => {
   try {
@@ -26,11 +31,23 @@ const createUser = async (req, res) => {
       throw new ApiError(400, "This name is already taken!");
     }
 
+    const otp = generateOtp();
+    const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
+
     const user = await User.create({
       name,
       email,
       password,
+      emailVerificationOtp: otp,
+      emailVerificationOtpExpires: otpExpires,
     });
+
+    await sendEmail(
+      email,
+      "Email Verification",
+      `Your OTP for email verification is ${otp}. It is valid for 10 minutes.`
+    );
+
     return res.json(new ApiSuccess(200, "User created successfully", { user }));
   } catch (error) {
     throw new ApiError(500, error.message);
