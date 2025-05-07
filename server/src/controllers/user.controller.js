@@ -91,11 +91,15 @@ const login = async (req, res) => {
     const options = {
       expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
       httpOnly: true,
-      sameSite: "strict",
+      secure: true,
+      sameSite: "none",
     };
+
     res
       .cookie("accessToken", accessToken, options)
       .cookie("refreshToken", refreshToken, options);
+
+    console.log(`user: ${user?.name} is logged in`);
     if (!user.isEmailVerified) {
       return res.json(
         new ApiSuccess(200, "User logged in successfully", {
@@ -116,5 +120,19 @@ const login = async (req, res) => {
   }
 };
 
+const logout = async (req, res) => {
+  try {
+    await User.findOneAndUpdate(req.user?._id, {
+      $set: {
+        refreshToken: null,
+      },
+    });
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
+    return res.json(new ApiSuccess(200, "User logged out successfully", {}));
+  } catch (error) {
+    console.log("Error in logout", error);
+  }
+};
 
-export { createUser, login };
+export { createUser, login, logout };

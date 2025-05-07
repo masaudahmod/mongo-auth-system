@@ -1,10 +1,13 @@
 import express from "express";
 import cors from "cors";
 import { ORIGIN } from "./constant.js";
+import cookieParser from "cookie-parser";
 
 const app = express();
-app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(cookieParser());
+app.use(cors({ origin: ORIGIN }));
 
 import userRoutes from "./routes/user.route.js";
 import { errorHandler } from "./middleware/errorHandler.js";
@@ -17,6 +20,6 @@ app.get("/", (_, res) => {
   );
 });
 
-app.use(errorHandler)
+app.use(errorHandler);
 
 export { app };
