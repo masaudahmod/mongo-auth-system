@@ -4,4 +4,6 @@ dotenv.config();
 const PORT = process.env.PORT;
 const ORIGIN = process.env.ORIGIN
 
-export { PORT, ORIGIN };
+const MONGO_URI = process.env.MONGO_URI;
+
+export { PORT, ORIGIN, MONGO_URI };

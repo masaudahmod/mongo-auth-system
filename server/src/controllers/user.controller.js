@@ -15,12 +15,13 @@ const createUser = async (req, res) => {
     if (password.length < 6) {
       throw new ApiError(400, "Password must be at least 6 characters long");
     }
-    const isEmailExist = User.findOne({ email });
+    
+    const isEmailExist = await User.findOne({ email: email });
     if (isEmailExist) {
       throw new ApiError(400, "Email already exist");
     }
-
-    const isNameMatch = User.findOne({ name });
+    
+    const isNameMatch = await User.findOne({ name });
     if (isNameMatch) {
       throw new ApiError(400, "This name is already taken!");
     }
