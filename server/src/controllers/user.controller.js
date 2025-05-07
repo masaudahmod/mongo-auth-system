@@ -5,7 +5,23 @@ import { ApiSuccess } from "../utils/ApiSuccess.js";
 
 const generateOtp = () => {
   return Math.floor(100000 + Math.random() * 900000).toString();
-}
+};
+
+const generateTokens = async (_id) => {
+  try {
+    const user = await User.findById(_id);
+    if (!user) {
+      throw new ApiError(404, "User not found");
+    }
+    const accessToken = await user.accessTokenGen();
+    const refreshToken = await user.refreshTokenGen();
+    user.refreshToken = refreshToken;
+    await user.save();
+    return { accessToken, refreshToken };
+  } catch (error) {
+    console.log("Error in generateTokens", error);
+  }
+};
 
 const createUser = async (req, res) => {
   try {
@@ -20,12 +36,12 @@ const createUser = async (req, res) => {
     if (password.length < 6) {
       throw new ApiError(400, "Password must be at least 6 characters long");
     }
-    
+
     const isEmailExist = await User.findOne({ email: email });
     if (isEmailExist) {
       throw new ApiError(400, "Email already exist");
     }
-    
+
     const isNameMatch = await User.findOne({ name });
     if (isNameMatch) {
       throw new ApiError(400, "This name is already taken!");
@@ -44,7 +60,7 @@ const createUser = async (req, res) => {
 
     await sendEmail(
       email,
-      "Email Verification",
+      "Mail Verification",
       `Your OTP for email verification is ${otp}. It is valid for 10 minutes.`
     );
 

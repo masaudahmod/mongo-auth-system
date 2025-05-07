@@ -1,5 +1,7 @@
 import mongoose, { model, mongo } from "mongoose";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import { ACCESSTOKEN_SECRET, REFRESHTOKEN_SECRET } from "../constant.js";
 
 const userSchema = new mongoose.Schema(
   {
@@ -36,6 +38,7 @@ const userSchema = new mongoose.Schema(
     passwordResetOtpExpires: {
       type: Date,
     },
+    refreshToken: String,
     socialAuth: {
       google: {
         id: String,
@@ -70,4 +73,36 @@ userSchema.pre("save", async function (next) {
   }
 });
 
-export const User =  mongoose.models.User || model("User", userSchema);
+userSchema.methods.isPasswordMatch = async function (password) {
+  try {
+    return await bcrypt.compare(password, this.password);
+  } catch (error) {
+    console.log("Error in Password Matching! ", error);
+  }
+};
+
+userSchema.methods.accessTokenGen = function () {
+  try {
+    return jwt.sign(
+      { _id: this._id, email: this.email, name: this.name },
+      ACCESSTOKEN_SECRET,
+      { expiresIn: "1d" }
+    );
+  } catch (error) {
+    console.log("Error in accessTokenGenerated! ", error);
+  }
+};
+
+userSchema.methods.refreshTokenGen = function () {
+  try {
+    return jwt.sign(
+      { _id: this._id, email: this.email, name: this.name },
+      REFRESHTOKEN_SECRET,
+      { expiresIn: "7d" }
+    );
+  } catch (error) {
+    console.log("Error in refreshTokenGenerated! ", error);
+  }
+};
+
+export const User = mongoose.models.User || model("User", userSchema);
