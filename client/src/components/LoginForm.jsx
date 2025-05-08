@@ -4,6 +4,7 @@ import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { useLoginUserMutation } from "../features/auth/authApi";
 import { useDispatch } from "react-redux";
+import { setUser } from "../features/auth/authSlice";
 
 const LoginForm = () => {
   const [loginUser, { isLoading }] = useLoginUserMutation();
@@ -24,8 +25,8 @@ const LoginForm = () => {
   const onSubmit = async (data) => {
     try {
       const res = await loginUser(data).unwrap();
-      dispatch(res);
-      console.log(res);
+      const userData = res?.data;
+      dispatch(setUser({ user: userData?.user, token: userData?.accessToken }));
       reset();
       alert("Login successful");
     } catch (error) {
