@@ -9,7 +9,9 @@ const AuthLayout = () => {
   useEffect(() => {
     if (!token || !user) {
       navigate("/sign-in");
-    } else {
+    }
+
+    if (token) {
       navigate("/");
     }
   }, [user, token, navigate]);

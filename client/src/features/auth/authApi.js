@@ -6,12 +6,45 @@ export const authApi = createApi({
   endpoints: (builder) => ({
     loginUser: builder.mutation({
       query: (credentials) => ({
-        url: "/users/login",
+        url: "/users/signin",
         method: "POST",
         body: credentials,
+      }),
+    }),
+    registerUser: builder.mutation({
+      query: (credentials) => ({
+        url: "/users/signup",
+        method: "POST",
+        body: credentials,
+      }),
+    }),
+    verifyEmailOtp: builder.mutation({
+      query: (credentials) => ({
+        url: "/users/verify-otp",
+        method: "POST",
+        body: credentials,
+      }),
+    }),
+    resendEmailVerificationOtp: builder.mutation({
+      query: (credentials) => ({
+        url: "/users/resend-otp",
+        method: "POST",
+        body: credentials,
+      }),
+    }),
+    logoutUser: builder.mutation({
+      query: () => ({
+        url: "/users/signout",
+        method: "POST",
       }),
     }),
   }),
 });
 
-export const { useLoginUserMutation } = authApi;
+export const {
+  useLoginUserMutation,
+  useRegisterUserMutation,
+  useVerifyEmailOtpMutation,
+  useResendEmailVerificationOtpMutation,
+  useLogoutUserMutation,
+} = authApi;

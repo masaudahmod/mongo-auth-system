@@ -1,14 +1,19 @@
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+import { Link } from "react-router-dom";
+import { useRegisterUserMutation } from "../features/auth/authApi";
+import { setUser } from "../features/auth/authSlice";
+import { useDispatch } from "react-redux";
 
 const RegisterForm = () => {
+  const [registerUser, { isLoading }] = useRegisterUserMutation();
+  const dispatch = useDispatch();
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset
+    reset,
   } = useForm();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -18,16 +23,27 @@ const RegisterForm = () => {
   };
 
   const onSubmit = async (data) => {
-    console.log("Register Data:", data);
-    reset();
+    try {
+      const res = await registerUser(data).unwrap();
+      const userData = res?.data;
+      dispatch(setUser({ user: userData?.user, token: userData?.accessToken }));
+      window.location.href = "/";
+      console.log("Registration successful");
+      reset();
+    } catch (error) {
+      console.error("Error in register", error);
+    }
   };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-sm bg-gray-300 rounded-2xl shadow-md p-6">
         <h2 className="text-2xl font-semibold text-center mb-6">Register</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-
           {/* Name */}
           <div>
             <label htmlFor="name" className="label">
@@ -37,7 +53,7 @@ const RegisterForm = () => {
               id="name"
               type="text"
               placeholder="Enter your name"
-              {...register('name', {
+              {...register("name", {
                 required: "Name is required",
                 minLength: {
                   value: 3,
@@ -46,7 +62,9 @@ const RegisterForm = () => {
               })}
               className="inputs"
             />
-            {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
+            {errors.name && (
+              <p className="text-red-500 text-sm">{errors.name.message}</p>
+            )}
           </div>
 
           {/* Email */}
@@ -58,7 +76,7 @@ const RegisterForm = () => {
               id="email"
               type="email"
               placeholder="Enter your email"
-              {...register('email', {
+              {...register("email", {
                 required: "Email is required",
                 pattern: {
                   value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
@@ -67,7 +85,9 @@ const RegisterForm = () => {
               })}
               className="inputs"
             />
-            {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+            {errors.email && (
+              <p className="text-red-500 text-sm">{errors.email.message}</p>
+            )}
           </div>
 
           {/* Password */}
@@ -79,7 +99,7 @@ const RegisterForm = () => {
               id="password"
               type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
-              {...register('password', {
+              {...register("password", {
                 required: "Password is required",
                 minLength: {
                   value: 6,
@@ -94,7 +114,9 @@ const RegisterForm = () => {
             >
               {showPassword ? <AiFillEyeInvisible /> : <AiFillEye />}
             </span>
-            {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+            {errors.password && (
+              <p className="text-red-500 text-sm">{errors.password.message}</p>
+            )}
           </div>
 
           <button
@@ -103,7 +125,15 @@ const RegisterForm = () => {
           >
             Register
           </button>
-          <p>Already have an account? <Link to="/sign-in" className="text-blue-800 cursor-pointer hover:underline">Sign In</Link></p>
+          <p>
+            Already have an account?{" "}
+            <Link
+              to="/sign-in"
+              className="text-blue-800 cursor-pointer hover:underline"
+            >
+              Sign In
+            </Link>
+          </p>
         </form>
       </div>
     </div>

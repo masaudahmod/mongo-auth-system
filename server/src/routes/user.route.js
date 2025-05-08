@@ -4,9 +4,9 @@ import { auth } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
-router.route("/users").post(createUser);
-router.route("/users/login").post(login);
-router.route("/users/logout").post(auth, logout);
+router.route("/users/signup").post(createUser);
+router.route("/users/signin").post(login);
+router.route("/users/signout").post(auth, logout);
 router.route("/users/verify-otp").post(auth, verifyEmailOtp);
 router.route("/users/resend-otp").post(auth, resendEmailVerificationOtp);
 
