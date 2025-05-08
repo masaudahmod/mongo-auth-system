@@ -2,8 +2,12 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { Link } from "react-router-dom";
+import { useLoginUserMutation } from "../features/auth/authApi";
+import { useDispatch } from "react-redux";
 
 const LoginForm = () => {
+  const [loginUser, { isLoading }] = useLoginUserMutation();
+  const dispatch = useDispatch();
   const {
     register,
     handleSubmit,
@@ -18,9 +22,20 @@ const LoginForm = () => {
   };
 
   const onSubmit = async (data) => {
-    console.log("Login Data:", data);
-    reset();
+    try {
+      const res = await loginUser(data).unwrap();
+      dispatch(res);
+      console.log(res);
+      reset();
+      alert("Login successful");
+    } catch (error) {
+      console.error("Error in login", error);
+    }
   };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
@@ -85,7 +100,12 @@ const LoginForm = () => {
           >
             Login
           </button>
-          <p>Don't have an account? <Link to="/sign-up" className="text-blue-900 hover:underline">Sign Up</Link></p>
+          <p>
+            Don't have an account?{" "}
+            <Link to="/sign-up" className="text-blue-900 hover:underline">
+              Sign Up
+            </Link>
+          </p>
         </form>
       </div>
     </div>
