@@ -1,11 +1,18 @@
 import "./App.css";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Login from "./pages/Login";
+import SignUp from "./pages/SignUp";
 
 function App() {
   return (
     <>
-      <h2 className="text-3xl text-center capitalize font-bold text-blue-100 shadow-2xl bg-slate-500 py-4">
-        this is vite project
-      </h2>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<h1>Home</h1>} />
+          <Route path="/sign-in" element={<Login />} />
+          <Route path="/sign-up" element={<SignUp />} />
+        </Routes>
+      </BrowserRouter>
     </>
   );
 }
