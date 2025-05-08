@@ -5,6 +5,9 @@ export const auth = async (req, _, next) => {
     req.cookies?.accessToken ||
     req.headers.authorization?.replace("Bearer ", "");
 
+  if (!token) {
+    return next();
+  }
   req.user = await verifyTokenAndGetUser(token);
   next();
 };

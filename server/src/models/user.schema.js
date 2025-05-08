@@ -27,9 +27,11 @@ const userSchema = new mongoose.Schema(
     },
     emailVerificationOtp: {
       type: String,
+      select: false,
     },
     emailVerificationOtpExpires: {
       type: Date,
+      select: false,
     },
     passwordResetOtp: {
       type: String,
