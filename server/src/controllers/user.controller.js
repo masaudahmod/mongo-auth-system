@@ -7,6 +7,23 @@ const generateOtp = () => {
   return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
+const getUser = async (req, res) => {
+  try {
+    const userEmail = req.user?.email;
+    if (!userEmail) {
+      throw new ApiError(400, "Email isn't provided");
+    }
+    const user = await User.findOne({ email: userEmail });
+    if (!user) {
+      throw new ApiError(404, "User not found");
+    }
+
+    return res.json(new ApiSuccess(200, "User found", { user }));
+  } catch (error) {
+    console.log("Error in getUser", error);
+  }
+};
+
 const generateTokens = async (_id) => {
   try {
     const user = await User.findById(_id);
@@ -245,6 +262,7 @@ const resendEmailVerificationOtp = async (req, res) => {
 };
 
 export {
+  getUser,
   createUser,
   login,
   logout,
