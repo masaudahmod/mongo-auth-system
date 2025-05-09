@@ -1,15 +1,24 @@
 import React from "react";
-import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { useGetUserQuery } from "../features/auth/userApi";
 
 const Profile = () => {
-  const { user } = useSelector((state) => state.auth);
 
-  const handleLogout = () => {
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("authUser");
-    window.location.href = "/";
-  };
+  const { data, isLoading } = useGetUserQuery();
+
+  const userData = data?.data?.user;
+
+  console.log(userData?.isEmailVerified);
+
+  if (isLoading) {
+    return <h1>Loading...</h1>;
+  }
+
+  // const handleLogout = () => {
+  //   localStorage.removeItem("authToken");
+  //   localStorage.removeItem("authUser");
+  //   window.location.href = "/";
+  // };
 
   return (
     <>
@@ -22,15 +31,15 @@ const Profile = () => {
         </Link>
         <div className="max-w-3xl min-w-xl mx-auto border text-white rounded p-3">
           <h2 className="text-2xl font-semibold mb-6 capitalize">
-            welcome - {user?.name}
+            welcome - {userData?.name}
           </h2>
-          <p className="text-xl mb-3 font-mono">Email: {user?.email}</p>
+          <p className="text-xl mb-3 font-mono">Email: {userData?.email}</p>
           <p className="text-xl mb-3 font-mono">
-            Pofile Created At: {user?.createdAt}
+            Pofile Created At: {userData?.createdAt}
           </p>
           <p className="text-xl mb-3 font-mono">
             Pofile verify status:{" "}
-            {user?.isEmailVerified ? "Verified" : "Not Verified"}
+            {userData?.isEmailVerified ? "Verified" : "Not Verified"}
           </p>
         </div>
       </section>
