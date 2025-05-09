@@ -1,20 +1,13 @@
-import React, { useEffect } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import React from "react";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const AuthLayout = () => {
-  const navigate = useNavigate();
-  const { user, token } = useSelector((state) => state.auth);
-
-  useEffect(() => {
-    if (!token || !user) {
-      navigate("/sign-in");
-    }
-
-    if (token) {
-      navigate("/");
-    }
-  }, [user, token, navigate]);
+  const { token } = useSelector((state) => state.auth);
+  const location = useLocation();
+  if (token === "undefined" || !token) {
+    return <Navigate to="/sign-in" state={{ from: location }} replace={true} />;
+  }
 
   return <Outlet />;
 };

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useLoginUserMutation } from "../features/auth/authApi";
 import { useDispatch } from "react-redux";
 import { setUser } from "../features/auth/authSlice";
@@ -15,7 +15,8 @@ const LoginForm = () => {
     formState: { errors },
     reset,
   } = useForm();
-
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
   const [showPassword, setShowPassword] = useState(false);
 
   const togglePassword = () => {
@@ -28,7 +29,7 @@ const LoginForm = () => {
       const userData = res?.data;
       dispatch(setUser({ user: userData?.user, token: userData?.accessToken }));
       reset();
-      alert("Login successful");
+      window.location.href = from;
     } catch (error) {
       console.error("Error in login", error);
     }
