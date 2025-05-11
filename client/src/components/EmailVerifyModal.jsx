@@ -1,23 +1,32 @@
 import React, { useState } from "react";
-import { useResendEmailVerificationOtpMutation } from "../features/auth/authApi";
+import {
+  useResendEmailVerificationOtpMutation,
+  useVerifyEmailOtpMutation,
+} from "../features/auth/authApi";
+import { useNavigate } from "react-router-dom";
 // import { useVerifyEmailOtpMutation } from "../redux/api/authApi"; // Adjust path
 
 const EmailVerifyModal = ({ userEmail }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [otp, setOtp] = useState("");
+  const navigate = useNavigate();
   //   const [verifyEmailOtp, { isLoading }] = useVerifyEmailOtpMutation();
 
   const [resendEmailVerificationOtp, { isLoading }] =
     useResendEmailVerificationOtpMutation();
 
+  const [verifyEmailOtp, { isError, isLoading: verifyLoading }] =
+    useVerifyEmailOtpMutation();
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      //   await verifyEmailOtp({ otp }).unwrap();
+      await verifyEmailOtp({ email: userEmail, otp: otp.toString() }).unwrap();
       //   toast.success("✅ Email verified successfully!");
       setOtp("");
       console.log("Email verified successfully!");
       setIsOpen(false);
+      // window.location.reload();
+      navigate(0);
     } catch (err) {
       console.log("Error in email verification", err);
     }
@@ -27,13 +36,24 @@ const EmailVerifyModal = ({ userEmail }) => {
     console.log(userEmail);
     try {
       await resendEmailVerificationOtp({ email: userEmail }).unwrap();
+      console.log("OTP sent successfully");
     } catch (error) {
       setIsOpen(false);
       console.log("error in resend otp", error);
     }
   };
 
-  if (isLoading) return <h2>Loading....</h2>;
+  if (isLoading)
+    return (
+      <h2 className="text-green-600 text-xl capitalize cursor-pointer font-semibold border hover:bg-black hover:text-white transition duration-300 px-2 py-1 rounded">
+        sending code...
+      </h2>
+    );
+
+  if (isError) {
+    setIsOpen(false);
+    return <h2>Something went wrong</h2>;
+  }
 
   return (
     <>
@@ -67,8 +87,8 @@ const EmailVerifyModal = ({ userEmail }) => {
                 // disabled={isLoading}
                 className="w-full bg-black text-white py-2 rounded-lg hover:bg-gray-800 cursor-pointer transition"
               >
-                {/* {isLoading ? "Verifying..." : "Submit"} */}
-                Submit
+                {verifyLoading ? "Verifying..." : "Submit"}
+                {/* Submit */}
               </button>
             </form>
             <button
