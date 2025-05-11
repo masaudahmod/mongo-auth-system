@@ -1,13 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useGetUserQuery } from "../features/auth/userApi";
+import EmailVerifyModal from "../components/EmailVerifyModal";
 
 const Profile = () => {
-
   const { data, isLoading } = useGetUserQuery();
 
   const userData = data?.data?.user;
-
 
   if (isLoading) {
     return <h1>Loading...</h1>;
@@ -36,10 +35,13 @@ const Profile = () => {
           <p className="text-xl mb-3 font-mono">
             Pofile Created At: {userData?.createdAt}
           </p>
-          <p className="text-xl mb-3 font-mono">
-            Pofile verify status:{" "}
-            {userData?.isEmailVerified ? "Verified" : "Not Verified"}
-          </p>
+          <div>
+            <p className="text-xl mb-3 font-mono">
+              Pofile verify status:{" "}
+              {userData?.isEmailVerified ? "Verified" : "Not Verified"}
+            </p>
+            {!userData?.isEmailVerified && <EmailVerifyModal userEmail={userData?.email}/>}
+          </div>
         </div>
       </section>
     </>
