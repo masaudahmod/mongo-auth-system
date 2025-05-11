@@ -7,7 +7,7 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({ origin: ORIGIN }));
+app.use(cors({ origin: ORIGIN, credentials: true }));
 
 import userRoutes from "./routes/user.route.js";
 import { errorHandler } from "./middleware/errorHandler.js";

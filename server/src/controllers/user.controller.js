@@ -106,10 +106,10 @@ const login = async (req, res) => {
 
     const { accessToken, refreshToken } = await generateTokens(user._id);
     const options = {
-      expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
       httpOnly: true,
       secure: true,
-      sameSite: "none",
+      maxage: 24 * 60 * 60 * 1000,
+      // expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
     };
 
     res

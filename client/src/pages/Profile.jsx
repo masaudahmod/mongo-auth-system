@@ -8,7 +8,6 @@ const Profile = () => {
 
   const userData = data?.data?.user;
 
-  console.log(userData?.isEmailVerified);
 
   if (isLoading) {
     return <h1>Loading...</h1>;

@@ -1,11 +1,17 @@
 import React from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useGetUserQuery } from "../features/auth/userApi";
 
 const AuthLayout = () => {
-  const { token } = useSelector((state) => state.auth);
   const location = useLocation();
-  if (token === "undefined" || !token) {
+  const { data: user, isLoading, isError } = useGetUserQuery();
+  // if (token === "undefined" || !token) {
+  //   return <Navigate to="/sign-in" state={{ from: location }} replace={true} />;
+  // }
+
+  if (isLoading) return <h1>Loading...</h1>;
+
+  if (isError || !user) {
     return <Navigate to="/sign-in" state={{ from: location }} replace={true} />;
   }
 
