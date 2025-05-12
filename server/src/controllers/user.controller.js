@@ -108,8 +108,7 @@ const login = async (req, res) => {
     const options = {
       httpOnly: true,
       secure: true,
-      maxage: 24 * 60 * 60 * 1000,
-      // expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+      expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
     };
 
     res
@@ -139,6 +138,8 @@ const login = async (req, res) => {
 };
 
 const logout = async (req, res) => {
+  console.log(req);
+  
   try {
     await User.findOneAndUpdate(req.user?._id, {
       $set: {

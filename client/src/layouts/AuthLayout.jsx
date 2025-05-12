@@ -9,11 +9,15 @@ const AuthLayout = () => {
   //   return <Navigate to="/sign-in" state={{ from: location }} replace={true} />;
   // }
 
-  if (isLoading) return <h1>Loading...</h1>;
+  if (isLoading) {
+    return <h1 className="text-3xl text-center text-emerald-700">Loading...</h1>;
+  }
 
   if (isError || !user) {
     return <Navigate to="/sign-in" state={{ from: location }} replace={true} />;
   }
+
+  
 
   return <Outlet />;
 };
