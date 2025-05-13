@@ -19,10 +19,18 @@ export const userApi = createApi({
   }),
   endpoints: (builder) => ({
     getUser: builder.query({
-      query: () => "/users", //if there is a error the set query in call back function and method in object
+      query: () => "/users",  //if there is a error the set query in call back function and method in object
       method: "GET",
+      credentials: "include",
     }),
+    verifyToken: builder.query({
+      query: () => ({
+        url: "/users",
+        method: "GET",
+        credentials: "include",
+      })
+    })
   }),
 });
 
-export const { useGetUserQuery } = userApi;
+export const { useGetUserQuery, useVerifyTokenQuery } = userApi;

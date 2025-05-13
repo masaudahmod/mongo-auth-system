@@ -1,7 +1,9 @@
+import otpVerifyMail from "../mail/otpVerifyMail.js";
 import { User } from "../models/user.schema.js";
 import { sendEmail } from "../services/mailService.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiSuccess } from "../utils/ApiSuccess.js";
+
 
 const generateOtp = () => {
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -9,7 +11,7 @@ const generateOtp = () => {
 
 const getUser = async (req, res) => {
   try {
-    const userEmail = req.user?.email;
+    const userEmail = req.user.email;
     if (!userEmail) {
       throw new ApiError(400, "Email isn't provided");
     }
@@ -240,10 +242,12 @@ const resendEmailVerificationOtp = async (req, res) => {
       },
       { new: true }
     );
+    const userName = updatedUser?.name
     await sendEmail(
       email,
       "Mail Verification",
-      `${updatedUser?.name}, Your OTP for email verification is ${otp}. It is valid for 10 minutes.`
+      "",
+      otpVerifyMail(userName, otp)
     );
 
     return res.json(

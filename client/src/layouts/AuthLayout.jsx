@@ -7,13 +7,13 @@ const AuthLayout = () => {
   const location = useLocation();
   const { data: user, isLoading, isError } = useGetUserQuery();
 
-  // if (token === "undefined" || !token) {
-  //   return <Navigate to="/sign-in" state={{ from: location }} replace={true} />;
-  // }
-
   if (isLoading) {
     return <Loading />;
   }
+
+  // if (user === "undefined" || !user) {
+  //   return <Navigate to="/sign-in" state={{ from: location }} replace={true} />;
+  // }
 
   if (isError || !user) {
     return <Navigate to="/sign-in" state={{ from: location }} replace={true} />;

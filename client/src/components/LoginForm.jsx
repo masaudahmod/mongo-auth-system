@@ -30,7 +30,7 @@ const LoginForm = () => {
       localStorage.setItem("auht", userData?.user);
       dispatch(setUser({ user: userData?.user}));
       reset();
-      window.location.href = from;
+      window.location.href = from
     } catch (error) {
       console.error("Error in login", error);
     }
