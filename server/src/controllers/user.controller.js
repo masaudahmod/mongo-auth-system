@@ -138,16 +138,15 @@ const login = async (req, res) => {
 };
 
 const logout = async (req, res) => {
-  console.log(req);
-  
   try {
-    await User.findOneAndUpdate(req.user?._id, {
-      $set: {
-        refreshToken: null,
-      },
+    const userId = req.user._id;
+    if (!userId) {
+      throw new ApiError(401, "Unauthorized Access - User not found");
+    }
+    await User.findByIdAndUpdate(userId, { $set: { refreshToken: null, },
     });
-    res.clearCookie("accessToken");
-    res.clearCookie("refreshToken");
+    res.clearCookie("accessToken", { path: "/" });
+    res.clearCookie("refreshToken", { path: "/" });
     console.log(`user: ${req.user?.name} is logged out`);
     return res.json(new ApiSuccess(200, "User logged out successfully", {}));
   } catch (error) {

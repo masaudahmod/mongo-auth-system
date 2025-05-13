@@ -6,6 +6,7 @@ export const auth = async (req, _, next) => {
     req.headers.authorization?.replace("Bearer ", "");
 
   if (!token) {
+    console.log("No token found");
     return next();
   }
   req.user = await verifyTokenAndGetUser(token);

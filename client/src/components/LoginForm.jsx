@@ -27,7 +27,8 @@ const LoginForm = () => {
     try {
       const res = await loginUser(data).unwrap();
       const userData = res?.data;
-      dispatch(setUser({ user: userData?.user, token: userData?.accessToken }));
+      localStorage.setItem("auht", userData?.user);
+      dispatch(setUser({ user: userData?.user}));
       reset();
       window.location.href = from;
     } catch (error) {

@@ -1,27 +1,29 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useGetUserQuery } from "../features/auth/userApi";
 import EmailVerifyModal from "../components/EmailVerifyModal";
 import { useLogoutUserMutation } from "../features/auth/authApi";
+import Loading from "../components/Loading";
 
 const Profile = () => {
   const { data, isLoading } = useGetUserQuery();
-  const { logoutUser } = useLogoutUserMutation();
+  const [logoutUser] = useLogoutUserMutation();
   const userData = data?.data?.user;
+  const navigate = useNavigate();
 
   if (isLoading) {
-    return <h1>Loading...</h1>;
+    return <Loading />;
   }
 
   const handleLogout = async () => {
     try {
-      await logoutUser();
+      await logoutUser().unwrap();
+      localStorage.removeItem("authToken");
+      navigate(0);
       console.log("Logout successful");
     } catch (error) {
       console.log("Error in logout", error);
     }
-    localStorage.removeItem("authToken");
-    window.location.href = "/";
   };
 
   return (
@@ -34,7 +36,10 @@ const Profile = () => {
           >
             Home
           </Link>
-          <button onClick={handleLogout} className="text-xl font-semibold text-white border hover:bg-black hover:text-white transition duration-300 px-2 py-1 rounded cursor-pointer">
+          <button
+            onClick={handleLogout}
+            className="text-xl font-semibold text-white border hover:bg-black hover:text-white transition duration-300 px-2 py-1 rounded cursor-pointer"
+          >
             Log out
           </button>
         </div>
