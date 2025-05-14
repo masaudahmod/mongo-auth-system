@@ -4,7 +4,6 @@ import { sendEmail } from "../services/mailService.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiSuccess } from "../utils/ApiSuccess.js";
 
-
 const generateOtp = () => {
   return Math.floor(100000 + Math.random() * 900000).toString();
 };
@@ -23,6 +22,7 @@ const getUser = async (req, res) => {
     return res.json(new ApiSuccess(200, "User found", { user }));
   } catch (error) {
     console.log("Error in getUser", error);
+    return;
   }
 };
 
@@ -135,7 +135,7 @@ const login = async (req, res) => {
     );
   } catch (error) {
     console.log("Error in login", error);
-    throw new ApiError(500, `Login Error: ${error.message}`);
+    throw new ApiError(500, error.message);
   }
 };
 
@@ -145,8 +145,7 @@ const logout = async (req, res) => {
     if (!userId) {
       throw new ApiError(401, "Unauthorized Access - User not found");
     }
-    await User.findByIdAndUpdate(userId, { $set: { refreshToken: null, },
-    });
+    await User.findByIdAndUpdate(userId, { $set: { refreshToken: null } });
     res.clearCookie("accessToken", { path: "/" });
     res.clearCookie("refreshToken", { path: "/" });
     console.log(`user: ${req.user?.name} is logged out`);
@@ -242,7 +241,7 @@ const resendEmailVerificationOtp = async (req, res) => {
       },
       { new: true }
     );
-    const userName = updatedUser?.name
+    const userName = updatedUser?.name;
     await sendEmail(
       email,
       "Mail Verification",

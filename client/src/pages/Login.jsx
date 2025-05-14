@@ -3,8 +3,8 @@ import LoginForm from "../components/LoginForm";
 import { useSelector } from "react-redux";
 
 const Login = () => {
-  const { token } = useSelector((state) => state.auth);
-  if (token) {
+  const { user } = useSelector((state) => state.auth);
+  if (user) {
     window.location.href = "/";
   }
   return (

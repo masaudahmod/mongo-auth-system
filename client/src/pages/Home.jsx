@@ -1,8 +1,8 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import Header from "../components/Header";
 
 const Home = () => {
+  
   return (
     <section className="bg-slate-300 h-screen overflow-hidden">
       <Header />

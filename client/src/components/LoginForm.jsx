@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useLoginUserMutation } from "../features/auth/authApi";
 import { useDispatch } from "react-redux";
 import { setUser } from "../features/auth/authSlice";
+import { toast } from "react-toastify";
 
 const LoginForm = () => {
   const [loginUser, { isLoading }] = useLoginUserMutation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -27,12 +29,20 @@ const LoginForm = () => {
     try {
       const res = await loginUser(data).unwrap();
       const userData = res?.data;
-      localStorage.setItem("auht", userData?.user);
-      dispatch(setUser({ user: userData?.user}));
+      dispatch(setUser({ user: userData?.user }));
+      console.log("Login successful");
       reset();
-      window.location.href = from
+      toast.success("Login successful!");
+      console.log("after toast Login successful");
+      navigate(from, { replace: true });
+      // window.location.href = from
     } catch (error) {
       console.error("Error in login", error);
+      if (error.data?.message === "Invalid credentials") {
+        toast.error("Password Incorrect!");
+      } else if (error.data?.message) {
+        toast.error(error.data.message);
+      }
     }
   };
 
