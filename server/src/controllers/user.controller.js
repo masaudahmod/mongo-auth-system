@@ -1,3 +1,4 @@
+import accountVerifiedMail from "../mail/accountVerifiedMail.js";
 import otpVerifyMail from "../mail/otpVerifyMail.js";
 import { User } from "../models/user.schema.js";
 import { sendEmail } from "../services/mailService.js";
@@ -66,22 +67,22 @@ const createUser = async (req, res) => {
       throw new ApiError(400, "This name is already taken!");
     }
 
-    const otp = generateOtp();
-    const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
+    // const otp = generateOtp();
+    // const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
 
     const user = await User.create({
       name,
       email,
       password,
-      emailVerificationOtp: otp,
-      emailVerificationOtpExpires: otpExpires,
+      // emailVerificationOtp: otp,
+      // emailVerificationOtpExpires: otpExpires,
     });
 
-    await sendEmail(
-      email,
-      "Mail Verification",
-      `Your OTP for email verification is ${otp}. It is valid for 10 minutes.`
-    );
+    // await sendEmail(
+    //   email,
+    //   "Mail Verification",
+    //   `Your OTP for email verification is ${otp}. It is valid for 10 minutes.`
+    // );
 
     return res.json(new ApiSuccess(201, "User created successfully", { user }));
   } catch (error) {
@@ -195,8 +196,14 @@ const verifyEmailOtp = async (req, res) => {
     await sendEmail(
       email,
       "Mail Verification",
-      `${updatedUser?.name}, Your email has been verified successfully.`
+      "",
+      accountVerifiedMail(updatedUser?.name)
     );
+    // await sendEmail(
+    //   email,
+    //   "Mail Verification",
+    //   `${updatedUser?.name}, Your email has been verified successfully.`
+    // );
 
     return res.json(
       new ApiSuccess(200, "Email verified successfully", { user: updatedUser })

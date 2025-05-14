@@ -14,7 +14,6 @@ const Profile = () => {
   if (isLoading) {
     return <Loading />;
   }
-
   return (
     <>
       <section className="bg-slate-700 h-screen">

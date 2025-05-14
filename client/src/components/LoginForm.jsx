@@ -57,7 +57,10 @@ const LoginForm = () => {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* Email */}
           <div>
-            <label htmlFor="email" className="label">
+            <label
+              htmlFor="email"
+              className={`label ${errors.email ? "text-red-500" : ""}`}
+            >
               Email
             </label>
             <input
@@ -71,16 +74,16 @@ const LoginForm = () => {
                   message: "Invalid email address",
                 },
               })}
-              className="inputs"
+              className={`inputs ${errors.email ? "border-red-500" : ""}`}
             />
-            {errors.email && (
-              <p className="text-red-500 text-sm">{errors.email.message}</p>
-            )}
           </div>
 
           {/* Password */}
           <div className="relative">
-            <label htmlFor="password" className="label">
+            <label
+              htmlFor="password"
+              className={`label ${errors.password ? "text-red-500" : ""}`}
+            >
               Password
             </label>
             <input
@@ -94,7 +97,9 @@ const LoginForm = () => {
                   message: "Password must be at least 6 characters",
                 },
               })}
-              className="inputs pr-10"
+              className={`inputs border pr-10 ${
+                errors.password ? "border-red-500" : ""
+              }`}
             />
             <span
               onClick={togglePassword}
@@ -102,9 +107,6 @@ const LoginForm = () => {
             >
               {showPassword ? <AiFillEyeInvisible /> : <AiFillEye />}
             </span>
-            {errors.password && (
-              <p className="text-red-500 text-sm">{errors.password.message}</p>
-            )}
           </div>
 
           <button

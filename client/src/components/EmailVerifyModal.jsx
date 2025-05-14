@@ -4,13 +4,12 @@ import {
   useVerifyEmailOtpMutation,
 } from "../features/auth/authApi";
 import { useNavigate } from "react-router-dom";
-// import { useVerifyEmailOtpMutation } from "../redux/api/authApi"; // Adjust path
+import { toast } from "react-toastify";
 
 const EmailVerifyModal = ({ userEmail }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [otp, setOtp] = useState("");
   const navigate = useNavigate();
-  //   const [verifyEmailOtp, { isLoading }] = useVerifyEmailOtpMutation();
 
   const [resendEmailVerificationOtp, { isLoading }] =
     useResendEmailVerificationOtpMutation();
@@ -21,11 +20,9 @@ const EmailVerifyModal = ({ userEmail }) => {
     e.preventDefault();
     try {
       await verifyEmailOtp({ email: userEmail, otp: otp.toString() }).unwrap();
-      //   toast.success("✅ Email verified successfully!");
+      toast.success("✅ Email verified successfully!");
       setOtp("");
-      console.log("Email verified successfully!");
       setIsOpen(false);
-      // window.location.reload();
       navigate(0);
     } catch (err) {
       console.log("Error in email verification", err);

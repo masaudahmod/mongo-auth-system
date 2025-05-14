@@ -1,14 +1,17 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useRegisterUserMutation } from "../features/auth/authApi";
-import { setUser } from "../features/auth/authSlice";
-import { useDispatch } from "react-redux";
+// import { setUser } from "../features/auth/authSlice";
+// import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
+import Loading from "./Loading";
 
 const RegisterForm = () => {
   const [registerUser, { isLoading }] = useRegisterUserMutation();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -24,11 +27,12 @@ const RegisterForm = () => {
 
   const onSubmit = async (data) => {
     try {
-      const res = await registerUser(data).unwrap();
-      const userData = res?.data;
-      dispatch(setUser({ user: userData?.user, token: userData?.accessToken }));
-      window.location.href = "/";
-      console.log("Registration successful");
+      await registerUser(data).unwrap();
+      // const res = await registerUser(data).unwrap();
+      // const userData = res?.data;
+      // dispatch(setUser({ user: userData?.user }));
+      navigate("/sign-in");
+      toast.success("Registration successful !");
       reset();
     } catch (error) {
       console.error("Error in register", error);
@@ -36,17 +40,17 @@ const RegisterForm = () => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-sm bg-gray-300 rounded-2xl shadow-md p-6">
-        <h2 className="text-2xl font-semibold text-center mb-6">Register</h2>
+        <h2 className="text-2xl font-semibold text-center mb-6">Register An Account</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* Name */}
-          <div>
-            <label htmlFor="name" className="label">
+          <div className="relative">
+            <label htmlFor="name" className={`label ${errors.name ? "text-red-500" : ""}`}>
               Name
             </label>
             <input
@@ -60,16 +64,18 @@ const RegisterForm = () => {
                   message: "Name must be at least 3 characters",
                 },
               })}
-              className="inputs"
+              className={`inputs ${errors.name ? "border-red-500" : ""}`}
             />
             {errors.name && (
-              <p className="text-red-500 text-sm">{errors.name.message}</p>
+              <p className="absolute right-0 top-0 text-red-500 text-sm">
+                {errors.name.message}
+              </p>
             )}
           </div>
 
           {/* Email */}
-          <div>
-            <label htmlFor="email" className="label">
+          <div className="relative">
+            <label htmlFor="email" className={`label ${errors.email ? "text-red-500" : ""}`}>
               Email
             </label>
             <input
@@ -83,16 +89,18 @@ const RegisterForm = () => {
                   message: "Invalid email address",
                 },
               })}
-              className="inputs"
+              className={`inputs ${errors.email ? "border-red-500" : ""}`}
             />
             {errors.email && (
-              <p className="text-red-500 text-sm">{errors.email.message}</p>
+              <p className="absolute right-0 top-0 font-semibold text-red-500 text-sm">
+                {errors.email.message}
+              </p>
             )}
           </div>
 
           {/* Password */}
           <div className="relative">
-            <label htmlFor="password" className="label">
+            <label htmlFor="password" className={`label ${errors.password ? "text-red-500" : ""}`}>
               Password
             </label>
             <input
@@ -115,7 +123,7 @@ const RegisterForm = () => {
               {showPassword ? <AiFillEyeInvisible /> : <AiFillEye />}
             </span>
             {errors.password && (
-              <p className="text-red-500 text-sm">{errors.password.message}</p>
+              <p className="text-red-500 text-sm text-right font-semibold">{errors.password.message}</p>
             )}
           </div>
 
