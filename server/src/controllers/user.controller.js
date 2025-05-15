@@ -67,22 +67,23 @@ const createUser = async (req, res) => {
       throw new ApiError(400, "This name is already taken!");
     }
 
-    // const otp = generateOtp();
-    // const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
+    const otp = generateOtp();
+    const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
 
     const user = await User.create({
       name,
       email,
       password,
-      // emailVerificationOtp: otp,
-      // emailVerificationOtpExpires: otpExpires,
+      emailVerificationOtp: otp,
+      emailVerificationOtpExpires: otpExpires,
     });
 
-    // await sendEmail(
-    //   email,
-    //   "Mail Verification",
-    //   `Your OTP for email verification is ${otp}. It is valid for 10 minutes.`
-    // );
+    await sendEmail(
+      email,
+      "Mail Verification",
+      "",
+      otpVerifyMail(name, otp)
+    );
 
     return res.json(new ApiSuccess(201, "User created successfully", { user }));
   } catch (error) {
@@ -166,6 +167,7 @@ const verifyEmailOtp = async (req, res) => {
     const user = await User.findOne({ email }).select(
       "+emailVerificationOtp +emailVerificationOtpExpires"
     );
+
     if (!user) {
       throw new ApiError(404, "User not found");
     }
@@ -177,12 +179,11 @@ const verifyEmailOtp = async (req, res) => {
     if (user.emailVerificationOtpExpires < Date.now()) {
       throw new ApiError(400, "This OTP has expired! Request a new OTP");
     }
+
     if (user.emailVerificationOtp !== otp) {
       throw new ApiError(401, "invalid OTP");
     }
-    // if (user.emailVerificationOtp !== otp) {
-    //   return res.json(new ApiError(401, "invalid OTP", ));
-    // }
+    
 
     const updatedUser = await User.findOneAndUpdate(
       user._id,
@@ -202,18 +203,13 @@ const verifyEmailOtp = async (req, res) => {
       "",
       accountVerifiedMail(updatedUser?.name)
     );
-    // await sendEmail(
-    //   email,
-    //   "Mail Verification",
-    //   `${updatedUser?.name}, Your email has been verified successfully.`
-    // );
 
     return res.json(
       new ApiSuccess(200, "Email verified successfully", { user: updatedUser })
     );
   } catch (error) {
-    console.log("Error in verifyEmailOtp", error);
-    throw new ApiError(500, `verifyEmailOtp Error: ${error.message}`, error);
+    console.log(error);
+    throw new ApiError(500, error.message);
   }
 };
 
@@ -268,8 +264,7 @@ const resendEmailVerificationOtp = async (req, res) => {
     console.log("Error in resendEmailVerificationOtp", error);
     throw new ApiError(
       500,
-      `resendEmailVerificationOtp Error: ${error.message}`,
-      error
+      error.message || "Error in resendEmailVerificationOtp"
     );
   }
 };
