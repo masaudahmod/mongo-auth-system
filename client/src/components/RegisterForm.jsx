@@ -36,6 +36,9 @@ const RegisterForm = () => {
       reset();
     } catch (error) {
       console.error("Error in register", error);
+      if (error.data?.message) {
+        toast.error(error.data?.message);
+      }
     }
   };
 

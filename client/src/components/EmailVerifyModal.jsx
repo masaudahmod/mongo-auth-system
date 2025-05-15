@@ -3,13 +3,11 @@ import {
   useResendEmailVerificationOtpMutation,
   useVerifyEmailOtpMutation,
 } from "../features/auth/authApi";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const EmailVerifyModal = ({ userEmail }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const [otp, setOtp] = useState("");
-  const navigate = useNavigate();
 
   const [resendEmailVerificationOtp, { isLoading }] =
     useResendEmailVerificationOtpMutation();
@@ -19,18 +17,20 @@ const EmailVerifyModal = ({ userEmail }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await verifyEmailOtp({ email: userEmail, otp: otp.toString() }).unwrap();
-      toast.success("✅ Email verified successfully!");
+      console.log("error", otp);
+      const res = await verifyEmailOtp({ email: userEmail, otp: otp }).unwrap();
+      console.log("error", res.data?.message);
+      toast(res.data?.message);
       setOtp("");
-      setIsOpen(false);
-      navigate(0);
     } catch (err) {
       console.log("Error in email verification", err);
+      if (err.data?.message) {
+        toast.error(err.data?.message);
+      }
     }
   };
   const handleModal = async () => {
     setIsOpen(true);
-    console.log(userEmail);
     try {
       await resendEmailVerificationOtp({ email: userEmail }).unwrap();
       console.log("OTP sent successfully");

@@ -170,9 +170,6 @@ const verifyEmailOtp = async (req, res) => {
       throw new ApiError(404, "User not found");
     }
 
-    if (user.emailVerificationOtp !== otp) {
-      throw new ApiError(400, "Invalid OTP");
-    }
     if (!user.emailVerificationOtp || !user.emailVerificationOtpExpires) {
       throw new ApiError(400, "OTP not found! Request a new OTP");
     }
@@ -180,6 +177,12 @@ const verifyEmailOtp = async (req, res) => {
     if (user.emailVerificationOtpExpires < Date.now()) {
       throw new ApiError(400, "This OTP has expired! Request a new OTP");
     }
+    if (user.emailVerificationOtp !== otp) {
+      throw new ApiError(401, "invalid OTP");
+    }
+    // if (user.emailVerificationOtp !== otp) {
+    //   return res.json(new ApiError(401, "invalid OTP", ));
+    // }
 
     const updatedUser = await User.findOneAndUpdate(
       user._id,
