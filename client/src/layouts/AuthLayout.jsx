@@ -9,10 +9,7 @@ const AuthLayout = () => {
   const location = useLocation();
   const { data: user, isLoading, isError } = useGetUserQuery();
 
-  if (isLoading) {
-    return <Loading />;
-  }
-
+  if (isLoading) return <Loading />;
   if (!dataUser) {
     return <Navigate to="/sign-in" state={{ from: location }} replace={true} />;
   }

@@ -24,11 +24,10 @@ const Header = () => {
 
   const handleLogout = async () => {
     try {
-      // await logoutUser().unwrap();
+      await logoutUser().unwrap();
       dispatch(logout());
       toast("logout successful");
-      navigate(0);
-      console.log("Logout successful");
+      navigate("/sign-in");
     } catch (error) {
       console.log("Error in logout", error);
     }

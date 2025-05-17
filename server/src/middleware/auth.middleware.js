@@ -8,7 +8,8 @@ export const auth = async (req, _, next) => {
   if (!token) {
     console.log("No token found");
     return next();
+  } else {
+    req.user = await verifyTokenAndGetUser(token);
+    next();
   }
-  req.user = await verifyTokenAndGetUser(token);
-  next();
 };

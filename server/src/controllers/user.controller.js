@@ -23,7 +23,7 @@ const getUser = async (req, res) => {
     return res.json(new ApiSuccess(200, "User found", { user }));
   } catch (error) {
     console.log("Error in getUser", error);
-    return;
+    return res.json(new ApiSuccess(200, "User not found", { user: null }));
   }
 };
 
