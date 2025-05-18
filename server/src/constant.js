@@ -1,7 +1,7 @@
 import * as dotenv from "dotenv";
 dotenv.config();
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 5000;
 const ORIGIN = process.env.ORIGIN
 
 const MONGO_URI = process.env.MONGO_URI;

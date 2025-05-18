@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const userApi = createApi({
   reducerPath: "userApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:8000/api/v1",
+    baseUrl: "https://auth-system-7mq5.onrender.com/api/v1",
     credentials: "include",
     prepareHeaders: (headers) => headers,
     // prepareHeaders: (headers, { getState }) => {
